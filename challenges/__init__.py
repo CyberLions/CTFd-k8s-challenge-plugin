@@ -28,7 +28,8 @@ def init_chals(k8s_client):
 
     result = deploy_certificates(k8s_client, config)
     result = False if not result else deploy_web_gateway(k8s_client, config)
-    result = False if not result else deploy_registry(k8s_client, config)
+    # Skip registry deployment since we're using external registry.psuccso.org
+    # result = False if not result else deploy_registry(k8s_client, config)
     result = False if not result else deploy_cleanup_cronjob(k8s_client, config)
 
     if result:
@@ -50,7 +51,8 @@ def deinit_chals(k8s_client):
     result = destroy_certificates(k8s_client, config)
     result = False if not result else destroy_cleanup_cronjob(k8s_client, config)
     result = False if not result else destroy_web_gateway(k8s_client, config)
-    result = False if not result else destroy_registry(k8s_client, config)
+    # Skip registry destruction since we're using external registry.psuccso.org
+    # result = False if not result else destroy_registry(k8s_client, config)
 
     return result
 
@@ -79,7 +81,6 @@ def deploy_registry(k8s_client, config):
     registry_hash = encrypt_password('ctfd', config.registry_password)
 
     options = {'registry_namespace': config.registry_namespace,
-               'istio_namespace': config.istio_namespace,
                'https_domain_name': config.https_domain_name,
                'registry_hash': registry_hash}
 
@@ -93,13 +94,12 @@ def deploy_registry(k8s_client, config):
 def deploy_certificates(k8s_client, config):
     """
     Deploys the certificates for the challenge endpoints.
+    Note: With nginx-ingress, certificates are handled automatically.
     """
 
     result = False
     template = get_template('certificates')
     options = { 'tcp_cert_name': config.tcp_domain_name,
-                'istio_namespace': config.istio_namespace,
-                'certificate_issuer_name': config.certificate_issuer_name,
                 'tcp_domain_name': config.tcp_domain_name,
                 'https_cert_name': config.https_domain_name,
                 'https_domain_name': config.https_domain_name}
@@ -112,21 +112,12 @@ def deploy_certificates(k8s_client, config):
 
 def deploy_web_gateway(k8s_client, config):
     """
-    Deploys the Istio Gateway for the web challenges.
+    Deploys the web gateway for the web challenges.
+    Note: With nginx-ingress, this is handled by individual challenge ingress resources.
     """
 
-    result = False
-    template = get_template('web-gateway')
-    options = { 'istio_namespace': config.istio_namespace,
-                'istio_ingress_name': config.istio_ingress_name,
-                'external_https_port': config.external_https_port,
-                'https_cert_name': config.https_domain_name,
-                'https_domain_name': config.https_domain_name}
-    if deploy_object(k8s_client, template, options):
-        result = True
-        print("ctfd-k8s-challenge: Successfully deployed web challenge gateway.")
-    else:
-        print("ctfd-k8s-challenge: Error: deploying web challenge gateway failed!")
+    result = True  # No need to deploy separate gateway with nginx-ingress
+    print("ctfd-k8s-challenge: Web gateway not needed with nginx-ingress.")
     return result
 
 def deploy_cleanup_cronjob(k8s_client, config):
@@ -163,40 +154,21 @@ def destroy_registry(k8s_client, config):
 def destroy_certificates(k8s_client, config):
     """
     Destroys the certificates from Kubernetes.
+    Note: With nginx-ingress, certificates are handled automatically.
     """
 
-    result = False
-    template = get_template('certificates')
-    options = { 'tcp_cert_name': config.tcp_domain_name,
-                'istio_namespace': config.istio_namespace,
-                'certificate_issuer_name': config.certificate_issuer_name,
-                'tcp_domain_name': config.tcp_domain_name,
-                'https_cert_name': config.https_domain_name,
-                'https_domain_name': config.https_domain_name}
-    if destroy_object(k8s_client, template, options):
-        result = True
-        print("ctfd-k8s-challenge: Successfully destroyed challenge certificates.")
-    else:
-        print("ctfd-k8s-challenge: Error: destroying challenge certificates failed!")
+    result = True  # No need to destroy separate certificates with nginx-ingress
+    print("ctfd-k8s-challenge: Certificates not managed separately with nginx-ingress.")
     return result
 
 def destroy_web_gateway(k8s_client, config):
     """
-    Destroys the Istio Gateway from Kubernetes.
+    Destroys the web gateway from Kubernetes.
+    Note: With nginx-ingress, this is handled by individual challenge ingress resources.
     """
 
-    result = False
-    template = get_template('web-gateway')
-    options = { 'istio_namespace': config.istio_namespace,
-                'istio_ingress_name': config.istio_ingress_name,
-                'external_https_port': config.external_https_port,
-                'https_cert_name': config.https_domain_name,
-                'https_domain_name': config.https_domain_name}
-    if destroy_object(k8s_client, template, options):
-        result = True
-        print("ctfd-k8s-challenge: Successfully destroyed web challenge gateway.")
-    else:
-        print("ctfd-k8s-challenge: Error: destroying web challenge gateway failed!")
+    result = True  # No need to destroy separate gateway with nginx-ingress
+    print("ctfd-k8s-challenge: Web gateway not managed separately with nginx-ingress.")
     return result
 
 def destroy_cleanup_cronjob(k8s_client, config):

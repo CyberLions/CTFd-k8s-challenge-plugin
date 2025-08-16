@@ -77,8 +77,7 @@ def define_k8s_api(app): #pylint: disable=too-many-statements
             options['container_name'] = challenge.image
             options['challenge_port'] = challenge.port
             options['random_port'] = int(options['port'])
-            options['istio_namespace'] = config.istio_namespace
-            options['istio_ingress_name'] = config.istio_ingress_name
+            # Removed istio_namespace and istio_ingress_name since we're using nginx-ingress
             options['external_tcp_port'] = int(config.external_tcp_port)
             options['external_https_port'] = int(config.external_https_port)
             options['tcp_cert_name'] = config.tcp_domain_name
@@ -256,7 +255,7 @@ def delete_challenge_instance(challenge):
 
     options['deployment_name'] = 'chal-' + str(challenge.instance_id)
     options['challenge_namespace'] = config.challenge_namespace
-    options['istio_namespace'] = config.istio_namespace
+    # Removed istio_namespace since we're using nginx-ingress
     challenge_template = get_template(challenge.chal_type)
     if destroy_object(get_k8s_client(), challenge_template, options):
         if challenge.chal_type == 'k8s-random-port':

@@ -7,15 +7,14 @@ spec:
   ttlSecondsAfterFinished: 100
   template:
     metadata:
-      annotations:
-        sidecar.istio.io/inject: "false"
+      annotations: {}
     spec:
       containers:
       - name: kaniko
         image: gcr.io/kaniko-project/executor:latest
         args:
         - "--context=git://{{ challenge_repo }}"
-        - "--destination=challenge-registry-service.{{ registry_namespace }}/{{ challenge_name }}:latest"
+        - "--destination=registry.psuccso.org/{{ challenge_name }}:latest"
         - "--insecure"
         env:
         - name: GIT_PASSWORD

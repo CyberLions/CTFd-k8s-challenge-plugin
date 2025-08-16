@@ -1,0 +1,49 @@
+# CTFd Deployment Patch for Git Credentials
+# Apply this patch to your existing CTFd deployment to mount the Git credentials
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ctfd
+  namespace: ctfd
+spec:
+  template:
+    spec:
+      containers:
+      - name: ctfd
+        env:
+        # Git credentials from secret
+        - name: GIT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: username
+              namespace: ctfd-challenges
+        - name: GIT_CREDENTIAL
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: password
+              namespace: ctfd-challenges
+        # Registry credentials from secret
+        - name: REGISTRY_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: registry-auth
+              key: .dockerconfigjson
+              namespace: ctfd-challenges
+        # Optional: Override config values
+        - name: CTFD_K8S_CHALLENGE_GIT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: username
+              namespace: ctfd-challenges
+        - name: CTFD_K8S_CHALLENGE_GIT_CREDENTIAL
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: password
+              namespace: ctfd-challenges
+        - name: CTFD_K8S_CHALLENGE_REGISTRY_PASSWORD
+          value: "g1TqDg5SqhTuDCVn7N8uIKsS64xpPQ2z"

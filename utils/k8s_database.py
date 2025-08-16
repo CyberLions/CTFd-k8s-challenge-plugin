@@ -148,11 +148,10 @@ class K8sConfig(db.Model): #pylint: disable=too-few-public-methods
     registry_password = db.Column("registry_password", db.String(64), index=False)
     registry_namespace = db.Column("registry_namespace", db.String(64), index=False)
     challenge_namespace = db.Column("challenge_namespace", db.String(64), index=False)
-    istio_namespace = db.Column("istio_namespace", db.String(64), index=False)
+    # Removed istio_namespace and istio_ingress_name since we're using nginx-ingress
     tcp_domain_name = db.Column("tcp_domain_name", db.String(64), index=False)
     https_domain_name = db.Column("https_domain_name", db.String(64), index=False)
-    certificate_issuer_name = db.Column("certificate_issuer_name", db.String(64), index=False)
-    istio_ingress_name = db.Column("istio_ingress_name", db.String(64), index=False)
+    # Removed certificate_issuer_name since nginx-ingress handles certs
     external_tcp_port = db.Column("external_tcp_port", db.Integer, index=False)
     external_https_port = db.Column("external_https_port", db.Integer, index=False)
     expire_interval = db.Column("expire_interval", db.Integer, index=False)

@@ -51,51 +51,26 @@ spec:
       port: {{ challenge_port }}
       targetPort: {{ challenge_port }}
 ---
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
+# Using nginx-ingress instead of Istio for TCP challenges
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: {{ deployment_name }}-tcp-gateway
-  namespace: {{ istio_namespace }}
-spec:
-  selector:
-    istio: {{ istio_ingress_name }}
-  servers:
-  - port:
-      number: {{ external_tcp_port }}
-      name: k8s-tcp-sni
-      protocol: TLS     
-    tls:
-      mode: SIMPLE
-      credentialName: {{ tcp_cert_name }}
-    hosts:
-    - "{{ deployment_name }}.{{ tcp_domain_name }}"
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: {{ deployment_name }}-vs
+  name: {{ deployment_name }}-tcp-ingress
   namespace: {{ challenge_namespace }}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "TCP"
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  hosts:
-  - "{{ deployment_name }}.{{ tcp_domain_name }}"
-  gateways:
-  - {{ istio_namespace }}/{{ deployment_name }}-tcp-gateway
-  tcp:
-  - match:
-    - port: {{ external_tcp_port }}
-    route:
-    - destination:
-        host: {{ deployment_name }}-service
-        port:
-          number: {{ challenge_port }}
----
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: {{ deployment_name }}
-  namespace: {{ challenge_namespace }}
-spec:
-  host: {{ deployment_name }}-service
-  trafficPolicy:
-    tls:
-      mode: DISABLE
+  rules:
+  - host: {{ deployment_name }}.{{ tcp_domain_name }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ deployment_name }}-service
+            port:
+              number: {{ challenge_port }}

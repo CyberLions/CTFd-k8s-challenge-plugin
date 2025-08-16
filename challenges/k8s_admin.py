@@ -32,10 +32,6 @@ class K8sConfigForm(BaseForm):  # pylint: disable=too-few-public-methods
         "Challenge Namespace",
         description="The namespace to deploy challenges to."
     )
-    istio_namespace = StringField(
-        "Istio Namespace",
-        description="The namespace where istio is deployed to."
-    )
     tcp_domain_name = StringField(
         "TCP Domain Name",
         description="The domain name for TCP challenges."
@@ -43,14 +39,6 @@ class K8sConfigForm(BaseForm):  # pylint: disable=too-few-public-methods
     https_domain_name = StringField(
         "Web Domain Name",
         description="The domain name for web challenges."
-    )
-    certificate_issuer_name = StringField(
-        "Certificate Issuer Name",
-        description="The name of the certificate issuer in the cluster."
-    )
-    istio_ingress_name = StringField(
-        "Istio Ingress Name",
-        description="The name of the cluster Istio Ingress Gateway."
     )
     external_tcp_port = StringField(
         "External TCP Port",
@@ -102,11 +90,8 @@ def define_k8s_admin(app):
                 config.git_credential = request.form['git_credential']
             config.registry_namespace = request.form['registry_namespace']
             config.challenge_namespace = request.form['challenge_namespace']
-            config.istio_namespace = request.form['istio_namespace']
             config.tcp_domain_name = request.form['tcp_domain_name']
             config.https_domain_name = request.form['https_domain_name']
-            config.certificate_issuer_name = request.form['certificate_issuer_name']
-            config.istio_ingress_name = request.form['istio_ingress_name']
             config.external_tcp_port = int(request.form['external_tcp_port'])
             config.external_https_port = int(request.form['external_https_port'])
             config.expire_interval = int(request.form['expire_interval'])

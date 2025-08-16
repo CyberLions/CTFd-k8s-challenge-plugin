@@ -79,35 +79,18 @@ def destroy_object(k8s_client, template, template_variables):
 
 def add_ingress_port(k8s_client, config, port):
     """
-    Patches the istio ingress gateway service to listen on a new port.
+    With nginx-ingress, ports are handled automatically by the ingress controller.
+    This function is kept for compatibility but does nothing.
     """
     result = True
-
-    name = 'istio-' + config.istio_ingress_name
-    namespace = config.istio_namespace
-    body = {"spec":{"$setElementOrder/ports":[{"port":port}],"ports":[{"name": str(port),
-            "port":port,"protocol":"TCP","targetPort":port}]}}
-
-    try:
-        k8s_client.patch_namespaced_service(name, namespace, body)
-    except Exception as general_exception: # pylint: disable=broad-except
-        result = False
-        print("ERROR: ctfd-k8s-challenges: ", general_exception)
+    print("ctfd-k8s-challenges: Port management not needed with nginx-ingress")
     return result
 
 def delete_ingress_port(k8s_client, config, port):
     """
-    Patches the istio ingress gateway service to remove a port.
+    With nginx-ingress, ports are handled automatically by the ingress controller.
+    This function is kept for compatibility but does nothing.
     """
     result = True
-
-    name = 'istio-' + config.istio_ingress_name
-    namespace = config.istio_namespace
-    body = {"spec":{"ports":[{"port":port}],"ports":[{"$patch":"delete","port":port}]}} # pylint: disable=duplicate-key
-
-    try:
-        k8s_client.patch_namespaced_service(name, namespace, body)
-    except Exception as general_exception: # pylint: disable=broad-except
-        result = False
-        print("ERROR: ctfd-k8s-challenges: ", general_exception)
+    print("ctfd-k8s-challenges: Port management not needed with nginx-ingress")
     return result
