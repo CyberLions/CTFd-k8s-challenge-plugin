@@ -119,10 +119,11 @@ def define_k8s_admin(app):
             db.session.commit()
 
         return render_template(
-            "k8s_admin.html",
+            "ctfd-k8s-challenge/k8s_admin.html",
             config=config,
             form=form,
             challenge_instances=challenge_instances
         )
+
 
     app.register_blueprint(k8s_admin)
