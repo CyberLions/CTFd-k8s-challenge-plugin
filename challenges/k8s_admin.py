@@ -4,19 +4,17 @@ k8s_admin
 This file defines the backend for the Admin interface for the plugin.
 """
 
+import os
+from flask import request, Blueprint, render_template
 from CTFd.utils.decorators import admins_only         # pylint: disable=import-error
 from CTFd.forms.fields import SubmitField             # pylint: disable=import-error
 from CTFd.forms import BaseForm                       # pylint: disable=import-error
 from CTFd.models import db                            # pylint: disable=import-error
-from flask import request, Blueprint, render_template # pylint: disable=import-error
-from wtforms import (
-    HiddenField,
-    PasswordField,
-    StringField,
-)
+from wtforms import HiddenField, PasswordField, StringField
 from ..utils import get_config, get_all_challenges
 
-class K8sConfigForm(BaseForm): #pylint: disable=too-few-public-methods
+
+class K8sConfigForm(BaseForm):  # pylint: disable=too-few-public-methods
     """
     This class defines the config form for the plugin.
     """
@@ -72,16 +70,26 @@ class K8sConfigForm(BaseForm): #pylint: disable=too-few-public-methods
     )
     submit = SubmitField('Submit')
 
+
 def define_k8s_admin(app):
     """
-    Defines the actual route and backend for the admin web ui.
+    Defines the actual route and backend for the admin web UI.
     """
-    k8s_admin = Blueprint('k8s_admin', __name__,
-                            template_folder='templates', static_folder='assets')
+
+    # Set plugin root directory (one level above 'challenges')
+    plugin_root = os.path.dirname(os.path.dirname(__file__))
+
+    # Register blueprint with absolute paths to templates and assets
+    k8s_admin = Blueprint(
+        'k8s_admin',
+        __name__,
+        template_folder=os.path.join(plugin_root, "templates"),
+        static_folder=os.path.join(plugin_root, "assets")
+    )
 
     @k8s_admin.route("/admin/kubernetes", methods=["GET", "POST"])
     @admins_only
-    def admin(): #pylint: disable=too-many-branches
+    def admin():  # pylint: disable=too-many-branches
         config = get_config()
         form = K8sConfigForm()
         challenge_instances = []
@@ -90,31 +98,19 @@ def define_k8s_admin(app):
             challenge_instances = get_all_challenges()
 
         elif request.method == "POST":
-
-            if len(request.form['git_credential']) > 0:
+            if len(request.form.get('git_credential', "")) > 0:
                 config.git_credential = request.form['git_credential']
-            if config.registry_namespace != request.form['registry_namespace']:
-                config.registry_namespace = request.form['registry_namespace']
-            if config.challenge_namespace != request.form['challenge_namespace']:
-                config.challenge_namespace = request.form['challenge_namespace']
-            if config.istio_namespace != request.form['istio_namespace']:
-                config.istio_namespace = request.form['istio_namespace']
-            if config.tcp_domain_name != request.form['tcp_domain_name']:
-                config.tcp_domain_name = request.form['tcp_domain_name']
-            if config.https_domain_name != request.form['https_domain_name']:
-                config.https_domain_name = request.form['https_domain_name']
-            if config.certificate_issuer_name != request.form['certificate_issuer_name']:
-                config.certificate_issuer_name = request.form['certificate_issuer_name']
-            if config.istio_ingress_name != request.form['istio_ingress_name']:
-                config.istio_ingress_name = request.form['istio_ingress_name']
-            if config.external_tcp_port != int(request.form['external_tcp_port']):
-                config.external_tcp_port = int(request.form['external_tcp_port'])
-            if config.external_https_port != int(request.form['external_https_port']):
-                config.external_https_port = int(request.form['external_https_port'])
-            if config.expire_interval != int(request.form['expire_interval']):
-                config.expire_interval = int(request.form['expire_interval'])
-            if config.ctfd_url != request.form['ctfd_url']:
-                config.ctfd_url = request.form['ctfd_url']
+            config.registry_namespace = request.form['registry_namespace']
+            config.challenge_namespace = request.form['challenge_namespace']
+            config.istio_namespace = request.form['istio_namespace']
+            config.tcp_domain_name = request.form['tcp_domain_name']
+            config.https_domain_name = request.form['https_domain_name']
+            config.certificate_issuer_name = request.form['certificate_issuer_name']
+            config.istio_ingress_name = request.form['istio_ingress_name']
+            config.external_tcp_port = int(request.form['external_tcp_port'])
+            config.external_https_port = int(request.form['external_https_port'])
+            config.expire_interval = int(request.form['expire_interval'])
+            config.ctfd_url = request.form['ctfd_url']
 
             db.session.commit()
 
@@ -125,5 +121,5 @@ def define_k8s_admin(app):
             challenge_instances=challenge_instances
         )
 
-
+    # Register the blueprint with the main Flask app
     app.register_blueprint(k8s_admin)
