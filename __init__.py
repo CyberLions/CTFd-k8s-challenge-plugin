@@ -27,11 +27,12 @@ def load(app):
     init_db()
     define_k8s_admin(app)
 
-    if init_chals(k8s_client):
-        register_plugin_assets_directory(app, base_path='/plugins/ctfd-k8s-challenge/assets')
-        define_k8s_api(app)
-    else:
-        print(
-            "ctfd-k8s-challenge: Error: ctfd-k8s-challenge unable to initialize.  \
-                It will be disabled."
-            )
+    try:
+        if init_chals(k8s_client):
+            register_plugin_assets_directory(app, base_path='/plugins/ctfd-k8s-challenge/assets')
+            define_k8s_api(app)
+        else:
+            print("ctfd-k8s-challenge: Error: ctfd-k8s-challenge unable to initialize. It will be disabled.")
+    except Exception as e:
+        print("CTFd-K8S PLUGIN INIT ERROR:", e)
+        raise
