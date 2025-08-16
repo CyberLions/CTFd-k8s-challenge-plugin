@@ -18,24 +18,11 @@ spec:
         image: {{ container_name }}
         imagePullPolicy: Always
         ports:
-        - name: chal-port
-          containerPort: {{ challenge_port }}
-          protocol: TCP
-        resources:
-          limits:
-            memory: "50Mi"
-            cpu: "25m"
+        - containerPort: {{ challenge_port }}
+          name: chal-port
       imagePullSecrets:
-        - name: {{ deployment_name }}-pull
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: {{ deployment_name }}-pull
-  namespace: {{ challenge_namespace }}
-data:
-  .dockerconfigjson: {{ registry_data }}
-type: kubernetes.io/dockerconfigjson
+      - name: {{ pull_secret }}
+
 ---
 apiVersion: v1
 kind: Service
@@ -43,56 +30,11 @@ metadata:
   name: {{ deployment_name }}-service
   namespace: {{ challenge_namespace }}
 spec:
+  type: NodePort
   selector:
     app: {{ deployment_name }}
   ports:
-    - name: chal-port
-      protocol: TCP
-      port: {{ challenge_port }}
+    - port: {{ challenge_port }}
       targetPort: {{ challenge_port }}
----
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: {{ deployment_name }}-tcp-{{ random_port }}-gateway
-  namespace: {{ istio_namespace }}
-spec:
-  selector:
-    istio: {{ istio_ingress_name }}
-  servers:
-  - port:
-      number: {{ random_port }}
       protocol: TCP
-      name: tcp
-    hosts:
-    - '*'
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: {{ deployment_name }}-vs
-  namespace: {{ challenge_namespace }}
-spec:
-  hosts:
-  - "*"
-  gateways:
-  - {{ istio_namespace }}/{{ deployment_name }}-tcp-{{ random_port }}-gateway
-  tcp:
-  - match:
-    - port: {{ random_port }}
-    route:
-    - destination:
-        host: {{ deployment_name }}-service
-        port:
-          number: {{ challenge_port }}
----
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: {{ deployment_name }}
-  namespace: {{ challenge_namespace }}
-spec:
-  host: {{ deployment_name }}-service
-  trafficPolicy:
-    tls:
-      mode: DISABLE
+      nodePort: {{ random_port }}

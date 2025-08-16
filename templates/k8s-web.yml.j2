@@ -18,24 +18,11 @@ spec:
         image: {{ container_name }}
         imagePullPolicy: Always
         ports:
-        - name: chal-port
-          containerPort: {{ challenge_port }}
-          protocol: TCP
-        resources:
-          limits:
-            memory: "50Mi"
-            cpu: "25m"
+        - containerPort: {{ challenge_port }}
+          name: chal-port
       imagePullSecrets:
-        - name: {{ deployment_name }}-pull
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: {{ deployment_name }}-pull
-  namespace: {{ challenge_namespace }}
-data:
-  .dockerconfigjson: {{ registry_data }}
-type: kubernetes.io/dockerconfigjson
+      - name: {{ pull_secret }}
+
 ---
 apiVersion: v1
 kind: Service
@@ -46,35 +33,27 @@ spec:
   selector:
     app: {{ deployment_name }}
   ports:
-    - name: chal-port
-      protocol: TCP
-      port: {{ challenge_port }}
+    - port: {{ challenge_port }}
       targetPort: {{ challenge_port }}
+      protocol: TCP
+
 ---
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: {{ deployment_name }}-vs
+  name: {{ deployment_name }}-ingress
   namespace: {{ challenge_namespace }}
+  annotations:
+    kubernetes.io/ingress.class: nginx
 spec:
-  hosts:
-  - "{{ deployment_name }}.{{ https_domain_name }}"
-  gateways:
-  - {{ istio_namespace }}/k8s-https-challenge-gateway
-  http:
-  - route:
-    - destination:
-        host: {{ deployment_name }}-service
-        port:
-          number: {{ challenge_port }}
----
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: {{ deployment_name }}
-  namespace: {{ challenge_namespace }}
-spec:
-  host: {{ deployment_name }}-service
-  trafficPolicy:
-    tls:
-      mode: DISABLE
+  rules:
+  - host: {{ deployment_name }}.{{ https_domain_name | replace('https://','') }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ deployment_name }}-service
+            port:
+              number: {{ challenge_port }}
