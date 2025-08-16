@@ -4,11 +4,11 @@ registry_password: env
 registry_namespace: registry
 challenge_namespace: challenges
 istio_namespace: istio-system
-tcp_domain_name: chal.example.com
-https_domain_name: web.example.com
+tcp_domain_name: ctf.psuccso.org
+https_domain_name: https://ctf.psuccso.org/
 certificate_issuer_name: istio-issuer
 istio_ingress_name: ingressgateway
 external_tcp_port: 443
 external_https_port: 443
 expire_interval: 3600
-ctfd_url: http://ctfd-service.ctfd
+ctfd_url: https://ctf.psuccso.org/
