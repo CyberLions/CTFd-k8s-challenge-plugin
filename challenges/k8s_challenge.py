@@ -79,23 +79,46 @@ class K8sChallengeType(BaseChallenge): #pylint: disable=too-few-public-methods
 		:param challenge:
 		:return: Challenge object, data dictionary to be returned to the user
 		"""
-        challenge = K8sChallenge.query.filter_by(id=challenge.id).first()
-        data = {
-            'id': challenge.id,
-            'name': challenge.name,
-            'value': challenge.value,
-            'description': challenge.description,
-            'category': challenge.category,
-            'state': challenge.state,
-            'max_attempts': challenge.max_attempts,
-            'type': challenge.type,
-            'type_data': {
-                'id': K8sChallengeType.id,
-                'name': K8sChallengeType.name,
-                'templates': K8sChallengeType.templates,
-                'scripts': K8sChallengeType.scripts,
+        # Get the K8s-specific challenge data
+        k8s_challenge = K8sChallenge.query.filter_by(id=challenge.id).first()
+        
+        if not k8s_challenge:
+            # Fallback to basic challenge data if K8s data not found
+            data = {
+                'id': challenge.id,
+                'name': challenge.name,
+                'value': challenge.value,
+                'description': challenge.description,
+                'category': challenge.category,
+                'state': challenge.state,
+                'max_attempts': challenge.max_attempts,
+                'type': challenge.type,
+                'type_data': {
+                    'id': K8sChallengeType.id,
+                    'name': K8sChallengeType.name,
+                    'templates': K8sChallengeType.templates,
+                    'scripts': K8sChallengeType.scripts,
+                }
             }
-        }
+        else:
+            # Use K8s-specific challenge data
+            data = {
+                'id': k8s_challenge.id,
+                'name': k8s_challenge.name,
+                'value': k8s_challenge.value,
+                'description': k8s_challenge.description,
+                'category': k8s_challenge.category,
+                'state': k8s_challenge.state,
+                'max_attempts': k8s_challenge.max_attempts,
+                'type': k8s_challenge.type,
+                'type_data': {
+                    'id': K8sChallengeType.id,
+                    'name': K8sChallengeType.name,
+                    'templates': K8sChallengeType.templates,
+                    'scripts': K8sChallengeType.scripts,
+                }
+            }
+        
         return data
 
     @staticmethod

@@ -15,6 +15,9 @@ from CTFd.plugins import register_plugin_assets_directory # pylint: disable=impo
 from .challenges import init_chals, deinit_chals, define_k8s_admin
 from .utils import init_db, get_k8s_client, define_k8s_api
 
+# Import the K8sChallenge models so they are registered with SQLAlchemy
+from .challenges.k8s_challenge import K8sChallenge, K8sTcpChallenge, K8sWebChallenge, K8sRandomPortChallenge
+
 def load(app):
     """
     This function is called by CTFd to load the initial plugin.
