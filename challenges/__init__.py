@@ -128,24 +128,32 @@ def deploy_web_gateway(k8s_client, config):
 def deploy_cleanup_cronjob(k8s_client, config):
     """
     Deploys the cronjob which calls the /api/v1/k8s/clean endpoint every minute.
+    Note: This is optional and won't prevent the plugin from initializing.
     """
 
     print(f"ctfd-k8s-challenge: Debug - Deploying cleanup cronjob to namespace: {config.challenge_namespace}")
     print(f"ctfd-k8s-challenge: Debug - CTFd URL: {config.ctfd_url}")
     
-    result = False
-    template = get_template('clean')
-    print(f"ctfd-k8s-challenge: Debug - Got template: {template is not None}")
-    
-    options = {'ctfd_url': config.ctfd_url,
-               'challenge_namespace': config.challenge_namespace}
-    print(f"ctfd-k8s-challenge: Debug - Template options: {options}")
-    
-    if deploy_object(k8s_client, template, options):
-        result = True
-        print("ctfd-k8s-challenge: Successfully deployed cleanup cronjob.")
-    else:
-        print("ctfd-k8s-challenge: Error: deploying cleanup cronjob failed!")
+    try:
+        result = False
+        template = get_template('clean')
+        print(f"ctfd-k8s-challenge: Debug - Got template: {template is not None}")
+        
+        options = {'ctfd_url': config.ctfd_url,
+                   'challenge_namespace': config.challenge_namespace}
+        print(f"ctfd-k8s-challenge: Debug - Template options: {options}")
+        
+        if deploy_object(k8s_client, template, options):
+            result = True
+            print("ctfd-k8s-challenge: Successfully deployed cleanup cronjob.")
+        else:
+            print("ctfd-k8s-challenge: Warning: deploying cleanup cronjob failed, but continuing...")
+            result = True  # Don't fail the entire initialization
+            
+    except Exception as e:
+        print(f"ctfd-k8s-challenge: Warning: cleanup cronjob deployment failed with error: {e}")
+        print("ctfd-k8s-challenge: Continuing initialization without cleanup cronjob...")
+        result = True  # Don't fail the entire initialization
     
     print(f"ctfd-k8s-challenge: Debug - deploy_cleanup_cronjob returning: {result}")
     return result
