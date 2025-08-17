@@ -22,20 +22,34 @@ def init_chals(k8s_client):
     Also registers the actual challenge classes.
     """
     config = get_config()
+    print(f"ctfd-k8s-challenge: Debug - challenge_namespace: {config.challenge_namespace}")
 
     if not config.challenge_namespace:
+        print("ctfd-k8s-challenge: Debug - No challenge_namespace configured, returning False")
         return False
 
+    print("ctfd-k8s-challenge: Debug - Starting deployment of core resources...")
+    
     result = deploy_certificates(k8s_client, config)
+    print(f"ctfd-k8s-challenge: Debug - deploy_certificates result: {result}")
+    
     result = False if not result else deploy_web_gateway(k8s_client, config)
+    print(f"ctfd-k8s-challenge: Debug - deploy_web_gateway result: {result}")
+    
     # Skip registry deployment since we're using external registry.psuccso.org
     # result = False if not result else deploy_registry(k8s_client, config)
+    
     result = False if not result else deploy_cleanup_cronjob(k8s_client, config)
+    print(f"ctfd-k8s-challenge: Debug - deploy_cleanup_cronjob result: {result}")
 
     if result:
+        print("ctfd-k8s-challenge: Debug - All resources deployed successfully, registering challenge classes...")
         CHALLENGE_CLASSES['k8s-tcp'] = K8sTcpChallengeType
         CHALLENGE_CLASSES['k8s-web'] = K8sWebChallengeType
         CHALLENGE_CLASSES['k8s-random-port'] = K8sRandomPortChallengeType
+        print("ctfd-k8s-challenge: Debug - Challenge classes registered successfully")
+    else:
+        print("ctfd-k8s-challenge: Debug - Resource deployment failed, not registering challenge classes")
 
     return result
 
@@ -97,17 +111,8 @@ def deploy_certificates(k8s_client, config):
     Note: With nginx-ingress, certificates are handled automatically.
     """
 
-    result = False
-    template = get_template('certificates')
-    options = { 'tcp_cert_name': config.tcp_domain_name,
-                'tcp_domain_name': config.tcp_domain_name,
-                'https_cert_name': config.https_domain_name,
-                'https_domain_name': config.https_domain_name}
-    if deploy_object(k8s_client, template, options):
-        result = True
-        print("ctfd-k8s-challenge: Successfully deployed challenge certificates.")
-    else:
-        print("ctfd-k8s-challenge: Error: deploying challenge certificates failed!")
+    result = True  # No need to deploy separate certificates with nginx-ingress
+    print("ctfd-k8s-challenge: Certificates not needed with nginx-ingress.")
     return result
 
 def deploy_web_gateway(k8s_client, config):
@@ -125,15 +130,24 @@ def deploy_cleanup_cronjob(k8s_client, config):
     Deploys the cronjob which calls the /api/v1/k8s/clean endpoint every minute.
     """
 
+    print(f"ctfd-k8s-challenge: Debug - Deploying cleanup cronjob to namespace: {config.challenge_namespace}")
+    print(f"ctfd-k8s-challenge: Debug - CTFd URL: {config.ctfd_url}")
+    
     result = False
     template = get_template('clean')
+    print(f"ctfd-k8s-challenge: Debug - Got template: {template is not None}")
+    
     options = {'ctfd_url': config.ctfd_url,
                'challenge_namespace': config.challenge_namespace}
+    print(f"ctfd-k8s-challenge: Debug - Template options: {options}")
+    
     if deploy_object(k8s_client, template, options):
         result = True
         print("ctfd-k8s-challenge: Successfully deployed cleanup cronjob.")
     else:
         print("ctfd-k8s-challenge: Error: deploying cleanup cronjob failed!")
+    
+    print(f"ctfd-k8s-challenge: Debug - deploy_cleanup_cronjob returning: {result}")
     return result
 
 def destroy_registry(k8s_client, config):
