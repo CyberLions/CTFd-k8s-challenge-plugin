@@ -10,7 +10,7 @@ Istio, and Cert-Manager for it to function correctly.
 Written by Nathan Higley <contact@nathanhigley.com>
 """
 
-from CTFd.plugins import register_plugin_assets_directory # pylint: disable=import-error
+from CTFd.plugins import register_plugin_assets_directory, register_plugin_template_directory # pylint: disable=import-error
 
 from .challenges import init_chals, deinit_chals, define_k8s_admin
 from .utils import init_db, get_k8s_client, define_k8s_api
@@ -32,7 +32,9 @@ def load(app):
 
     try:
         if init_chals(k8s_client):
+            # Register both assets and templates directories
             register_plugin_assets_directory(app, base_path='/plugins/ctfd-k8s-challenge/assets')
+            register_plugin_template_directory(app, base_path='/plugins/ctfd-k8s-challenge/assets')
             define_k8s_api(app)
         else:
             print("ctfd-k8s-challenge: Error: ctfd-k8s-challenge unable to initialize. It will be disabled.")
