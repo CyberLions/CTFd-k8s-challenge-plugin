@@ -14,14 +14,14 @@ class K8sWebChallengeType(K8sChallengeType):
     id = "k8s-web"
     name = "k8s-web"
     templates = {
-        'create': '/plugins/ctfd-k8s-challenge/assets/k8s_web/create.html',
-        'update': '/plugins/ctfd-k8s-challenge/assets/k8s_web/update.html',
-        'view': '/plugins/ctfd-k8s-challenge/assets/k8s_web/view.html',
+        'create': 'k8s_web/create.html',
+        'update': 'k8s_web/update.html',
+        'view': 'k8s_web/view.html',
     }
     scripts = {
-        'create': '/plugins/ctfd-k8s-challenge/assets/k8s_web/create.js',
-        'update': '/plugins/ctfd-k8s-challenge/assets/k8s_web/update.js',
-        'view': '/plugins/ctfd-k8s-challenge/assets/k8s_web/view.js',
+        'create': 'k8s_web/create.js',
+        'update': 'k8s_web/update.js',
+        'view': 'k8s_web/view.js',
     }
     route = '/plugins/ctfd-k8s-challenge/assets/k8s_web'
     blueprint = Blueprint('ctfd-k8s-challenge', __name__,
