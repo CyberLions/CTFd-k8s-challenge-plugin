@@ -17,17 +17,13 @@ from .utils import init_db, get_k8s_client, define_k8s_api
 from .challenges.k8s_challenge import K8sChallenge, K8sTcpChallenge, K8sWebChallenge, K8sRandomPortChallenge
 
 def load(app):
-    """
-    This function is called by CTFd to load the plugin.
-    """
     plugin_dir = os.path.dirname(os.path.abspath(__file__))
 
-    # Add ctfd-templates to Python path for template loading
+    # Add ctfd-templates to Python path
     ctfd_templates_dir = os.path.join(plugin_dir, 'ctfd-templates')
     if ctfd_templates_dir not in sys.path:
         sys.path.insert(0, ctfd_templates_dir)
 
-    # Initialize database and Kubernetes client
     app.db.create_all()
     k8s_client = get_k8s_client()
     print("ctfd-k8s-challenge: Successfully loaded Kubernetes config.")
@@ -37,14 +33,11 @@ def load(app):
 
     try:
         if init_chals(k8s_client):
-            # Register the plugin assets directory (JS/CSS files)
-            assets_dir = os.path.join(plugin_dir, 'assets')
+            # Register plugin assets without 'directory'
             register_plugin_assets_directory(
                 app,
-                base_path='/plugins/ctfd-k8s-challenge/assets',
-                directory=assets_dir
+                base_path='/plugins/ctfd-k8s-challenge/assets'
             )
-
             define_k8s_api(app)
         else:
             print("ctfd-k8s-challenge: Error initializing challenges. Plugin disabled.")
