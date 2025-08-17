@@ -13,14 +13,14 @@ class K8sTcpChallengeType(K8sChallengeType):
     id = "k8s-tcp"
     name = "k8s-tcp"
     templates = {
-        'create': 'k8s_tcp/create.html',
-        'update': 'k8s_tcp/update.html',
-        'view': 'k8s_tcp/view.html',
+        'create': '/plugins/ctfd-k8s-challenge/assets/k8s_tcp/create.html',
+        'update': '/plugins/ctfd-k8s-challenge/assets/k8s_tcp/update.html',
+        'view': '/plugins/ctfd-k8s-challenge/assets/k8s_tcp/view.html',
     }
     scripts = {
-        'create': 'k8s_tcp/create.js',
-        'update': 'k8s_tcp/update.js',
-        'view': 'k8s_tcp/view.js',
+        'create': '/plugins/ctfd-k8s-challenge/assets/k8s_tcp/create.js',
+        'update': '/plugins/ctfd-k8s-challenge/assets/k8s_tcp/update.js',
+        'view': '/plugins/ctfd-k8s-challenge/assets/k8s_tcp/view.js',
     }
     route = '/plugins/ctfd-k8s-challenge/assets/k8s_tcp'
     blueprint = Blueprint('ctfd-k8s-challenge', __name__,

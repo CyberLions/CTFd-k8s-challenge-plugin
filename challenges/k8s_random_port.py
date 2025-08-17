@@ -13,14 +13,14 @@ class K8sRandomPortChallengeType(K8sChallengeType):
     id = "k8s-random-port"
     name = "k8s-random-port"
     templates = {
-        'create': 'k8s_random_port/create.html',
-        'update': 'k8s_random_port/update.html',
-        'view': 'k8s_random_port/view.html',
+        'create': '/plugins/ctfd-k8s-challenge/assets/k8s_random_port/create.html',
+        'update': '/plugins/ctfd-k8s-challenge/assets/k8s_random_port/update.html',
+        'view': '/plugins/ctfd-k8s-challenge/assets/k8s_random_port/view.html',
     }
     scripts = {
-        'create': 'k8s_random_port/create.js',
-        'update': 'k8s_random_port/update.js',
-        'view': 'k8s_random_port/view.js',
+        'create': '/plugins/ctfd-k8s-challenge/assets/k8s_random_port/create.js',
+        'update': '/plugins/ctfd-k8s-challenge/assets/k8s_random_port/update.js',
+        'view': '/plugins/ctfd-k8s-challenge/assets/k8s_random_port/view.js',
     }
     route = '/plugins/ctfd-k8s-challenge/assets/k8s_random_port'
     blueprint = Blueprint('ctfd-k8s-challenge', __name__,
