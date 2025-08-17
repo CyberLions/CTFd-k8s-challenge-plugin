@@ -27,5 +27,7 @@ class K8sTcpChallengeType(K8sChallengeType):
         'ctfd-k8s-challenge',
         __name__,
         template_folder='ctfd-templates',
-        static_folder='assets'
+        static_folder='assets',
+        static_url_path='/plugins/ctfd-k8s-challenge/assets'
     )
+
