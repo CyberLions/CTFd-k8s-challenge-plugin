@@ -16,7 +16,11 @@ def get_template(template_name):
     """
     Returns the template yaml from the name.
     """
-    template_path = 'CTFd/plugins/ctfd-k8s-challenge/templates/' + template_name + '.yml.j2'
+    import os
+    
+    # Get the directory where this plugin is located
+    plugin_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    template_path = os.path.join(plugin_dir, 'templates', template_name + '.yml.j2')
 
     template = ''
 
