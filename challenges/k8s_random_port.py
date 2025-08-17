@@ -18,9 +18,9 @@ class K8sRandomPortChallengeType(K8sChallengeType):
         "view": "ctfd-templates/k8s_random_port/view.html",
     }
     scripts = {
-        "create": "/plugins/ctfd-k8s-challenge/assets/k8s_random_port/create.js",
-        "update": "/plugins/ctfd-k8s-challenge/assets/k8s_random_port/update.js",
-        "view": "/plugins/ctfd-k8s-challenge/assets/k8s_random_port/view.js",
+        "create": "k8s_random_port/create.js",
+        "update": "k8s_random_port/update.js",
+        "view": "k8s_random_port/view.js",
     }
     route = '/plugins/ctfd-k8s-challenge/assets/k8s_random_port'
     blueprint = Blueprint(

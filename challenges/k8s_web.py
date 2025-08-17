@@ -19,9 +19,9 @@ class K8sWebChallengeType(K8sChallengeType):
         "view": "ctfd-templates/k8s_web/view.html",
     }
     scripts = {
-        "create": "/plugins/ctfd-k8s-challenge/assets/k8s_web/create.js",
-        "update": "/plugins/ctfd-k8s-challenge/assets/k8s_web/update.js",
-        "view": "/plugins/ctfd-k8s-challenge/assets/k8s_web/view.js",
+        "create": "k8s_web/create.js",
+        "update": "k8s_web/update.js",
+        "view": "k8s_web/view.js",
     }
     route = '/plugins/ctfd-k8s-challenge/assets/k8s_web'
     blueprint = Blueprint(
