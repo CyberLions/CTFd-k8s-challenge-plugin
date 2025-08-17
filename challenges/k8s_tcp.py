@@ -13,21 +13,19 @@ class K8sTcpChallengeType(K8sChallengeType):
     id = "k8s-tcp"
     name = "k8s-tcp"
     templates = {
-        'create': 'ctfd-templates/k8s_tcp/create.html',
-        'update': 'ctfd-templates/k8s_tcp/update.html',
-        'view': 'ctfd-templates/k8s_tcp/view.html',
+        "create": "ctfd-templates/k8s_tcp/create.html",
+        "update": "ctfd-templates/k8s_tcp/update.html",
+        "view": "ctfd-templates/k8s_tcp/view.html",
     }
     scripts = {
-        'create': '/plugins/ctfd-k8s-challenge/assets/k8s_tcp/create.js',
-        'update': '/plugins/ctfd-k8s-challenge/assets/k8s_tcp/update.js',
-        'view': '/plugins/ctfd-k8s-challenge/assets/k8s_tcp/view.js',
+        "create": "/plugins/ctfd-k8s-challenge/assets/k8s_tcp/create.js",
+        "update": "/plugins/ctfd-k8s-challenge/assets/k8s_tcp/update.js",
+        "view": "/plugins/ctfd-k8s-challenge/assets/k8s_tcp/view.js",
     }
     route = '/plugins/ctfd-k8s-challenge/assets/k8s_tcp'
     blueprint = Blueprint(
-        'ctfd-k8s-challenge',
+        "ctfd-k8s-challenge",
         __name__,
-        template_folder='ctfd-templates',
-        static_folder='assets',
-        static_url_path='/plugins/ctfd-k8s-challenge/assets'
+        template_folder="ctfd-templates",
+        static_folder="assets"
     )
-

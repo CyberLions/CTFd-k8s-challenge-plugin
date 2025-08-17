@@ -2,7 +2,7 @@
 """
 CTFd-K8s-Challenges
 
-This plugin is built to enable CTFd to create
+This plugin enables CTFd to create
 containerized challenge instances using Kubernetes.
 """
 
@@ -13,8 +13,14 @@ from CTFd.plugins import register_plugin_assets_directory  # pylint: disable=imp
 from .challenges import init_chals, deinit_chals, define_k8s_admin
 from .utils import init_db, get_k8s_client, define_k8s_api
 
-# Import the K8sChallenge models so they are registered with SQLAlchemy
-from .challenges.k8s_challenge import K8sChallenge, K8sTcpChallenge, K8sWebChallenge, K8sRandomPortChallenge
+# Import challenge models so they are registered with SQLAlchemy
+from .challenges.k8s_challenge import (
+    K8sChallenge,
+    K8sTcpChallenge,
+    K8sWebChallenge,
+    K8sRandomPortChallenge,
+)
+
 
 def load(app):
     plugin_dir = os.path.dirname(os.path.abspath(__file__))
@@ -24,20 +30,25 @@ def load(app):
     if ctfd_templates_dir not in sys.path:
         sys.path.insert(0, ctfd_templates_dir)
 
+    # Create database tables
     app.db.create_all()
+
+    # Initialize Kubernetes client
     k8s_client = get_k8s_client()
     print("ctfd-k8s-challenge: Successfully loaded Kubernetes config.")
 
+    # Initialize plugin DB and admin settings
     init_db()
     define_k8s_admin(app)
 
     try:
         if init_chals(k8s_client):
-            # Register plugin assets without 'directory'
+            # Correctly register plugin assets
             register_plugin_assets_directory(
                 app,
                 base_path='/plugins/ctfd-k8s-challenge/assets'
             )
+            # Define Kubernetes API routes
             define_k8s_api(app)
         else:
             print("ctfd-k8s-challenge: Error initializing challenges. Plugin disabled.")

@@ -13,21 +13,20 @@ class K8sRandomPortChallengeType(K8sChallengeType):
     id = "k8s-random-port"
     name = "k8s-random-port"
     templates = {
-        'create': 'ctfd-templates/k8s_random_port/create.html',
-        'update': 'ctfd-templates/k8s_random_port/update.html',
-        'view': 'ctfd-templates/k8s_random_port/view.html',
+        "create": "ctfd-templates/k8s_random_port/create.html",
+        "update": "ctfd-templates/k8s_random_port/update.html",
+        "view": "ctfd-templates/k8s_random_port/view.html",
     }
     scripts = {
-        'create': '/plugins/ctfd-k8s-challenge/assets/k8s_random_port/create.js',
-        'update': '/plugins/ctfd-k8s-challenge/assets/k8s_random_port/update.js',
-        'view': '/plugins/ctfd-k8s-challenge/assets/k8s_random_port/view.js',
+        "create": "/plugins/ctfd-k8s-challenge/assets/k8s_random_port/create.js",
+        "update": "/plugins/ctfd-k8s-challenge/assets/k8s_random_port/update.js",
+        "view": "/plugins/ctfd-k8s-challenge/assets/k8s_random_port/view.js",
     }
     route = '/plugins/ctfd-k8s-challenge/assets/k8s_random_port'
     blueprint = Blueprint(
-        'ctfd-k8s-challenge',
+        "ctfd-k8s-challenge",
         __name__,
-        template_folder='ctfd-templates',
-        static_folder='assets',
-        static_url_path='/plugins/ctfd-k8s-challenge/assets'
+        template_folder="ctfd-templates",
+        static_folder="assets"
     )
 
