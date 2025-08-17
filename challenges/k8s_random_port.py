@@ -13,9 +13,9 @@ class K8sRandomPortChallengeType(K8sChallengeType):
     id = "k8s-random-port"
     name = "k8s-random-port"
     templates = {
-        'create': '/plugins/ctfd-k8s-challenge/assets/k8s_random_port/create.html',
-        'update': '/plugins/ctfd-k8s-challenge/assets/k8s_random_port/update.html',
-        'view': '/plugins/ctfd-k8s-challenge/assets/k8s_random_port/view.html',
+        'create': 'ctfd-templates/k8s_random_port/create.html',
+        'update': 'ctfd-templates/k8s_random_port/update.html',
+        'view': 'ctfd-templates/k8s_random_port/view.html',
     }
     scripts = {
         'create': '/plugins/ctfd-k8s-challenge/assets/k8s_random_port/create.js',

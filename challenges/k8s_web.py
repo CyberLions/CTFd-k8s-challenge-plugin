@@ -14,9 +14,9 @@ class K8sWebChallengeType(K8sChallengeType):
     id = "k8s-web"
     name = "k8s-web"
     templates = {
-        'create': '/plugins/ctfd-k8s-challenge/assets/k8s_web/create.html',
-        'update': '/plugins/ctfd-k8s-challenge/assets/k8s_web/update.html',
-        'view': '/plugins/ctfd-k8s-challenge/assets/k8s_web/view.html',
+        'create': 'ctfd-templates/k8s_web/create.html',
+        'update': 'ctfd-templates/k8s_web/update.html',
+        'view': 'ctfd-templates/k8s_web/view.html',
     }
     scripts = {
         'create': '/plugins/ctfd-k8s-challenge/assets/k8s_web/create.js',

@@ -10,6 +10,8 @@ Istio, and Cert-Manager for it to function correctly.
 Written by Nathan Higley <contact@nathanhigley.com>
 """
 
+import os
+import sys
 from CTFd.plugins import register_plugin_assets_directory # pylint: disable=import-error
 
 from .challenges import init_chals, deinit_chals, define_k8s_admin
@@ -22,6 +24,12 @@ def load(app):
     """
     This function is called by CTFd to load the initial plugin.
     """
+    # Add the ctfd-templates directory to the Python path so CTFd can find the templates
+    plugin_dir = os.path.dirname(os.path.abspath(__file__))
+    ctfd_templates_dir = os.path.join(plugin_dir, 'ctfd-templates')
+    if ctfd_templates_dir not in sys.path:
+        sys.path.insert(0, ctfd_templates_dir)
+    
     app.db.create_all()
 
     k8s_client = get_k8s_client()
