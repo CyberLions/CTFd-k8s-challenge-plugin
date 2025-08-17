@@ -2,7 +2,7 @@
 
 {% block header %}
 <div class="alert alert-secondary" role="alert">
-	Kubernetes Web challenges allow a user to create a containerized instance of a challenge available over 443/HTTPS.
+	Kubernetes Random Port challenges allow a user to create a containerized instance of a challenge available over a random TCP port.
 </div>
 {% endblock %}
 
@@ -36,5 +36,5 @@
 {% endblock %}
 
 {% block type %}
-<input type="hidden" value="k8s-web" name="type" id="chaltype">
+<input type="hidden" value="k8s-random-port" name="type" id="chaltype">
 {% endblock %}
